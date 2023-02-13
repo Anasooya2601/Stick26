@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+//import { Document, Page } from 'react-pdf';
+import { Document, Page, pdfjs } from "react-pdf";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+function FileUploader() {
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState('');
+ 
+  const [creationDate, setCreationDate] = useState('');
 
-function App() {
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+    setFileName(selectedFile.name);
+    setCreationDate(selectedFile.lastModifiedDate);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <input type="file" onChange={handleFileChange} />
+      {file && (
+        <div>
+        <div>
+        <p> {creationDate.toLocaleString()} </p>{fileName}
+       
+          
+          </div>
+          
+          <Document file={file}>
+            <Page pageNumber={1} />
+          </Document>
+        </div>
+      )}
     </div>
   );
 }
 
-export default App;
+export default FileUploader;
+
+
+

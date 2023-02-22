@@ -3,6 +3,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/storage";
 import "./App.css";
+import Searchbar from "./searchbar";
 
 firebase.initializeApp({
   // Your Firebase config object
@@ -70,8 +71,8 @@ function App() {
             pageNo,
             date,
             time,
-            
-            pdfUrl,
+
+            pdfUrl
           })
           .then(() => {
             fetchPdfList();
@@ -89,16 +90,35 @@ function App() {
       setPdfList(pdfs);
     });
   };
+  // Add a new document to the "pdfs" collection
+  const addPdf = async (pdfData) => {
+    try {
+      const docRef = await db.collection("pdfs").add(pdfData);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
 
+  // Call the addPdf function with the PDF data you want to add to the collection
+  addPdf({
+    name: "example",
+    pageNo: 2,
+    date: "2022-02-21",
+    time: "14:30",
+    pdfUrl:
+      "https://seap.taylors.edu.my/file/rems/publication/109566_8816_1.pdf"
+  });
   return (
     <div className="App">
       <form onSubmit={handlePdfUpload}>
+        <h1>Demo</h1>
         <label>
           PDF file:
           <input type="file" onChange={handlePdfFileChange} />
         </label>
         <label>
-          Page no:
+          Total no of Pages:
           <input type="text" value={pageNo} onChange={handlePageNoChange} />
         </label>
         <label>
@@ -110,45 +130,46 @@ function App() {
           <input type="text" value={time} onChange={handleTimeChange} />
         </label>
         <label>
-          Name:
+          Title:
           <input type="text" value={name} onChange={handleNameChange} />
         </label>
         <button type="submit">Upload</button>
       </form>
+      <Searchbar />
       <table>
         <thead>
           <tr>
-          <th>Name of PDF</th>
-            <th>Page no</th>
+            <th>Pages</th>
             <th>Date</th>
+
             <th>Time</th>
-           
-            <th>URL</th>
+
+            <th>Title</th>
+            <th>Link</th>
           </tr>
         </thead>
         <tbody>
           {pdfList.map((pdf) => (
             <tr key={pdf.id}>
-              <td>{
-                pdf.pageNo}</td>
-          <td>{pdf.date}</td>
-          <td>{pdf.time}</td>
-          <td>{pdf.name}</td>
-          <td>
-            <a href={pdf.pdfUrl} target="_blank" rel="noreferrer">
-              {pdf.pdfUrl}
-            </a>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-);
+              <td>{pdf.pageNo}</td>
+              <td>{pdf.date}</td>
+              <td>{pdf.time}</td>
+              <td>{pdf.name}</td>
+              <td>
+                <a href={pdf.pdfUrl} target="_blank" rel="noreferrer">
+                  {pdf.pdfUrl}
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
-
 export default App;
+
 
 
 
